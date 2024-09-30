@@ -1,0 +1,27 @@
+-- employees entity + supervises relationship + work relationship
+CREATE TABLE Employees(Role TEXT, ID INTEGER, Name TEXT, Address TEXT, SupervisorID INTEGER NOT NULL, WorkSpaceID INTEGER NOT NULL, FOREIGN KEY(SupervisorID) REFERENCES Employees(ID), FOREIGN KEY(WorkSpaceID) REFERENCES Facilities(ID) ON DELETE NO ACTION, PRIMARY KEY(ID));
+
+-- Facilities entity + manage relationship
+CREATE TABLE Facilities(Address TEXT, ID INTEGER, City TEXT, ManagerID INTEGER NOT NULL, PRIMARY KEY(ID), FOREIGN KEY(ManagerID) REFERENCES Employees(ID) ON DELETE NO ACTION);
+
+-- table for exit relationship
+CREATE TABLE Exit(time TEXT, Transportation TEXT, FacilityID INTEGER, ParcelsNumber INTEGER, FOREIGN KEY(FacilityID) REFERENCES Facilities(ID), FOREIGN KEY(ParcelsNumber) REFERENCES Parcels(TrackNumber));
+
+-- table for entry relationship
+CREATE TABLE Enter(time TEXT, Next TEXT, FacilityID INTEGER, ParcelsNumber INTEGER, FOREIGN KEY(FacilityID)
+REFERENCES Facilities(ID), FOREIGN KEY(ParcelsNumber) REFERENCES Parcels(TrackNumber));
+
+-- table for Parcels
+CREATE TABLE Parcels(TrackNumber INTEGER, Delivery_Address TEXT, Drop_time TEXT, Weight INTEGER, PRIMARY KEY(TrackNumber));
+
+-- table for Set-valued attribute goods
+CREATE TABLE Goods(item TEXT, ParcelNumber INTEGER, FOREIGN KEY(ParcelNumber) REFERENCES Parcels(TrackNumber) ON DELETE CASCADE);
+
+--table for regular parcel entity:
+CREATE TABLE Regular(ParcelNumber INTEGER, FOREIGN KEY(ParcelNumber) REFERENCES Parcels(TrackNumber) ON DELETE CASCADE);
+
+-- table for expedited entity: 
+CREATE TABLE Expediated(ParcelNumber INTEGER, Date TEXT, Country TEXT, Total_value TEXT, FOREIGN KEY(ParcelNumber) REFERENCES Parcels(TrackNumber) ON DELETE CASCADE);
+
+-- table for attempt weak entity with delivery as a relationship using key of Parcel
+CREATE TABLE Attempt(Delivery_time TEXT, Driver TEXT, Status TEXT, Feedback TEXT, ParcelNumber INTEGER NOT NULL, FOREIGN KEY(ParcelNumber) REFERENCES Parcels(TrackNumber));
